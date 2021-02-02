@@ -1,4 +1,3 @@
-/* eslint-disable prefer-destructuring */
 import { Position } from "chess.js";
 import { Dimensions } from "react-native";
 import { Vector } from "react-native-redash";
@@ -8,7 +7,7 @@ export const SIZE = width / 8;
 
 export const toTranslation = (to: Position) => {
   "worklet";
-  // worklet don't support destructuring yet
+
   const tokens = to.split("");
   const col = tokens[0];
   const row = tokens[1];

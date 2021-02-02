@@ -40,10 +40,22 @@ export const PIECES: Pieces = {
 
 interface PieceProps {
   id: Piece;
+  position: Vector;
 }
 
-const Piece = ({ id }: PieceProps) => {
-  return <Image source={PIECES[id]} style={styles.piece} />;
+const Piece = ({ id, position }: PieceProps) => {
+  return (
+    <Animated.View
+      style={{
+        position: "absolute",
+        width: SIZE,
+        height: SIZE,
+        transform: [{ translateX: position.x }, { translateY: position.y }],
+      }}
+    >
+      <Image source={PIECES[id]} style={styles.piece} />
+    </Animated.View>
+  );
 };
 
 export default Piece;
