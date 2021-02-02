@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { View, StyleSheet, Dimensions } from "react-native";
+import { View, StyleSheet, Dimensions, Alert } from "react-native";
 import { Chess } from "chess.js";
 
 import Background from "./Background";
@@ -32,6 +32,8 @@ const Board = () => {
     [chess, state.player]
   );
 
+  const restartGame = () => {};
+
   return (
     <View style={styles.container}>
       <Background />
@@ -51,6 +53,20 @@ const Board = () => {
           );
         })
       )}
+      {chess.game_over() &&
+        Alert.alert(
+          "Game Over!",
+          `${state.player === "w" ? "Black" : "White"} won!`,
+          [
+            {
+              text: "Restart",
+              onPress: () => {
+                restartGame();
+              },
+            },
+            { text: "Cancel", onPress: () => console.log("Cancelled") },
+          ]
+        )}
     </View>
   );
 };

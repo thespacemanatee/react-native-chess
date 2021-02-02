@@ -18,5 +18,6 @@ module "chess.js" {
       moves(options: { verbose: true }): Move[];
       move(move: { from: string; to: string; promotion?: "q" | "r" | "n" | "b" });
       board(): Board;
+      game_over();
     }
   }
