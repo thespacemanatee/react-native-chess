@@ -41,20 +41,56 @@ export const PIECES: Pieces = {
 interface PieceProps {
   id: Piece;
   position: Vector;
+  chess: Chess;
 }
 
-const Piece = ({ id, position }: PieceProps) => {
+const Piece = ({ id, position, chess }: PieceProps) => {
+  const offsetX = useSharedValue(0);
+  const offsetY = useSharedValue(0);
+  const translateX = useSharedValue(position.x);
+  const translateY = useSharedValue(position.y);
+  const movePiece = useCallback((from: Position, to: Position) => {
+    const move = chess
+      .moves({ verbose: true })
+      .find((m) => m.from === from && m.to === to);
+    const { x, y } = toTranslation(move ? to : from);
+    translateX.value = withTiming(x);
+    translateY.value = withTiming(y);
+    if (move) {
+      chess.move(move);
+    }
+  }, []);
+  const onGestureEvent = useAnimatedGestureHandler({
+    onStart: () => {
+      offsetX.value = translateX.value;
+      offsetY.value = translateY.value;
+    },
+    onActive: ({ translationX, translationY }) => {
+      translateX.value = translationX + offsetX.value;
+      translateY.value = translationY + offsetY.value;
+    },
+    onEnd: () => {
+      const from = toPosition({ x: offsetX.value, y: offsetY.value });
+      const to = toPosition({ x: translateX.value, y: translateY.value });
+      runOnJS(movePiece)(from, to);
+    },
+  });
+  const piece = useAnimatedStyle(() => ({
+    position: "absolute",
+    width: SIZE,
+    height: SIZE,
+    transform: [
+      { translateX: translateX.value },
+      { translateY: translateY.value },
+    ],
+  }));
+
   return (
-    <Animated.View
-      style={{
-        position: "absolute",
-        width: SIZE,
-        height: SIZE,
-        transform: [{ translateX: position.x }, { translateY: position.y }],
-      }}
-    >
-      <Image source={PIECES[id]} style={styles.piece} />
-    </Animated.View>
+    <PanGestureHandler onGestureEvent={onGestureEvent}>
+      <Animated.View style={piece}>
+        <Image source={PIECES[id]} style={styles.piece} />
+      </Animated.View>
+    </PanGestureHandler>
   );
 };
 

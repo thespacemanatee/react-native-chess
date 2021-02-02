@@ -31,7 +31,13 @@ const Board = () => {
           if (square === null) {
             return null;
           }
-          return <Piece position={{x: j * SIZE, y: i * SIZE}} id={`${square.color}${square.type}` as const} />;
+          return (
+            <Piece
+              chess={chess}
+              position={{ x: j * SIZE, y: i * SIZE }}
+              id={`${square.color}${square.type}` as const}
+            />
+          );
         })
       )}
     </View>
