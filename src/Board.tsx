@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, StyleSheet, Dimensions } from "react-native";
 import { Chess } from "chess.js";
 
@@ -23,6 +23,15 @@ const Board = () => {
     board: chess.board(),
   });
 
+  const onTurn = useCallback(
+    () =>
+      setState({
+        player: state.player === "w" ? "b" : "w",
+        board: chess.board(),
+      }),
+    [chess, state.player]
+  );
+
   return (
     <View style={styles.container}>
       <Background />
@@ -33,6 +42,8 @@ const Board = () => {
           }
           return (
             <Piece
+              enabled={state.player === square.color}
+              onTurn={onTurn}
               chess={chess}
               position={{ x: j * SIZE, y: i * SIZE }}
               id={`${square.color}${square.type}` as const}
